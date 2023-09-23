@@ -1,14 +1,21 @@
 import logging
+<<<<<<< HEAD
 from typing import Sequence
 
 import asyncpg
 from fastapi import HTTPException
 from sqlalchemy import select, update, func, delete
+=======
+
+from fastapi import HTTPException
+from sqlalchemy import delete, func, select, update
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from src.db.models import Bot, ChannelBot
+<<<<<<< HEAD
 from src.db.session import get_session
 from src.models import (
     BasicBotsModel,
@@ -17,11 +24,20 @@ from src.models import (
     BotAliasByChannelIdModel,
     AllBundlesModel,
     BundleModel,
+=======
+from src.db.session import sessionmanager
+from src.models import (
+    AllBundlesModel,
+    BundleModel,
+    ChannelListModel,
+    StatusModel
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
 )
 
 logger = logging.getLogger(__name__)
 
 
+<<<<<<< HEAD
 async def add_bot(bot_data: BasicBotsModel, session: AsyncSession):
     new_bot = Bot(
         alias=bot_data.alias,
@@ -102,6 +118,10 @@ async def delete_bot(bot_id: int, session: AsyncSession):
 
 async def add_channel_to_bot_by_bot_id(bot_id: int, channel: str):
     async with get_session() as session:
+=======
+async def add_channel_to_bot_by_bot_id(bot_id: int, channel: str):
+    async with sessionmanager.session() as session:
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
         async with session.begin():
             # Проверяем, существует ли уже канал в списке каналов бота
             existing_channel = await session.execute(
@@ -190,6 +210,7 @@ async def get_all_channels(session: AsyncSession):
     return ChannelListModel(channels=channels)
 
 
+<<<<<<< HEAD
 async def get_bot_token_by_channel_id(channel_id: str, session: AsyncSession):
     query = select(Bot.bot_token).where(Bot.channels.op("@>")([channel_id]))
     result = await session.execute(query)
@@ -212,6 +233,13 @@ async def get_bot_url_by_channel_id(channel_id: str, session: AsyncSession):
             detail="No bot found with that channel_id",
         )
     return BotAliasByChannelIdModel(alias=row)
+=======
+async def get_bot_by_channel_id(channel_id: str, session: AsyncSession) -> Bot:
+    query = select(Bot).where(Bot.channels.contains([channel_id]))
+    result = await session.execute(query)
+    bot = result.scalar_one_or_none()
+    return bot
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
 
 
 async def get_bot_with_min_channels_count(session: AsyncSession):
@@ -236,13 +264,27 @@ async def set_bundle_status(
     await session.commit()
 
 
+<<<<<<< HEAD
 async def get_bot_id_by_token(session: AsyncSession, bot_token):
+=======
+async def get_bot_id_by_token(session: AsyncSession, bot_token: str):
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
     query = select(Bot.id).where(Bot.bot_token == bot_token)
     row = await session.execute(query)
     bot_id = row.fetchone()
     return bot_id[0]
 
 
+<<<<<<< HEAD
+=======
+async def get_bot_token_by_id(session: AsyncSession, id: int) -> str:
+    query = select(Bot.bot_token).where(Bot.id == id)
+    row = await session.execute(query)
+    bot_id = row.fetchone()
+    return bot_id[0]
+
+
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
 async def get_all_bundles(session: AsyncSession):
     res = AllBundlesModel(all_bundles=[])
     result = await session.execute(select(ChannelBot))

@@ -5,10 +5,18 @@ Revises:
 Create Date: 2023-05-07 15:18:13.749342
 
 """
+<<<<<<< HEAD
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
+=======
+import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
+
+from alembic import op
+
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
 # revision identifiers, used by Alembic.
 revision = "90421e74de2b"
 down_revision = None

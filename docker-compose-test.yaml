@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  test-db:
+    image: postgres:15
+    env_file:
+      test.env
+  test-app:
+    build: ./
+    command: bash -c "alembic -c testalembic.ini upgrade head && celery -A src.core.celery.celery_tasks worker --loglevel=${LOG_LEVEL} --purge"
+    env_file:
+      test.env
+    depends_on:
+      - test-db
+
+  test-redis:
+    image: redis:7
+    env_file:
+      test.env
+
+  pytest:
+    build: ./
+    command: pytest --disable-warnings --cov=src tests --cov-report term-missing
+    env_file:
+      - test.env
+    depends_on:
+      - test-app

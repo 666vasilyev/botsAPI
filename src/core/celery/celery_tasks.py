@@ -1,16 +1,22 @@
 # celery -A src.celery_tasks worker --loglevel=INFO --purge
 # celery -A src.celery_tasks beat --loglevel=INFO
 import asyncio
+<<<<<<< HEAD
 
 import logging
 
 
+=======
+import logging
+
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
 from aiogram import Bot, types
 from celery import Celery
 from fastapi import HTTPException
 from redis.client import Redis
 from starlette import status
 
+<<<<<<< HEAD
 from src.db.crud import (
     add_channel_to_bot_by_bot_id,
     get_bot_token_by_channel_id,
@@ -21,6 +27,18 @@ from src.db.crud import (
 )
 from src.models import MessagesPostResModel, StatusModel
 from src.core.config import Config
+=======
+from src.core.config import Config
+from src.db.crud import (
+    add_channel_to_bot_by_bot_id,
+    get_bot_id_by_token,
+    get_bot_token_by_id,
+    set_bundle_status,
+)
+from src.db.session import sessionmanager
+from src.models import MessagesPostResModel, StatusModel
+from src.routers.bots.crud import get_all_bots, get_bot_by_id
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
 
 celery = Celery(
     "celery_tasks",
@@ -58,9 +76,16 @@ def sync_add_channel_to_bot_by_bot_id(bot_id: int, channel: str):
 
 
 async def celery_post_messages(collect_model: MessagesPostResModel):
+<<<<<<< HEAD
     async with get_session() as session:
         bot_token = await get_bot_token_by_channel_id(
             channel_id=collect_model.channel_id, session=session
+=======
+    async with sessionmanager.session() as session:
+        bot_token = await get_bot_token_by_id(
+            session=session,
+            id=collect_model.bot_id
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
         )
     bot = Bot(token=bot_token)
     try:
@@ -68,10 +93,19 @@ async def celery_post_messages(collect_model: MessagesPostResModel):
             chat_id=f"@{collect_model.channel_id}", text=collect_model.message
         )
     except Exception:
+<<<<<<< HEAD
         async with get_session() as session:
             bot_id = await get_bot_id_by_token(session, bot_token)
             await set_bundle_status(bot_id, collect_model.channel_id, False, session)
         # TODO : ошибки в Celery не обрабатываются, тк все вызываемые методы - асинхронные. Разобраться.
+=======
+        async with sessionmanager.session() as session:
+            bot_id = await get_bot_id_by_token(session, bot_token)
+            await set_bundle_status(
+                bot_id, collect_model.channel_id, False, collect_model.message, session
+            )
+        # TODO : ошибки в Celery не обрабатываются
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"The bot-channel bundle is invalid",
@@ -81,7 +115,11 @@ async def celery_post_messages(collect_model: MessagesPostResModel):
 
 
 async def check_bot_status():
+<<<<<<< HEAD
     async with get_session() as session:
+=======
+    async with sessionmanager.session() as session:
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
         bots = await get_all_bots(session)
     for bot in bots:
         if bot:
@@ -98,6 +136,7 @@ async def check_bot_status():
                         types.ChatMemberStatus.CREATOR,
                         types.ChatMemberStatus.ADMINISTRATOR,
                     ]
+<<<<<<< HEAD
                     if is_admin:
                         await set_bundle_status(
                             bot_id, channel_id, is_admin, "Bundle is active", session
@@ -110,8 +149,25 @@ async def check_bot_status():
                             "Current bot doesn't have any permissions",
                             session,
                         )
+=======
+                    message = "Current bot doesn't have any permissions"
+                    if is_admin:
+                        message = "Bundle is active"
+                    await set_bundle_status(
+                        bot_id,
+                        channel_id,
+                        is_admin,
+                        message,
+                        session,
+                    )
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
                 except Exception as e:
                     await set_bundle_status(bot_id, channel_id, False, str(e), session)
             await tgBot.close()
         else:
+<<<<<<< HEAD
             return StatusModel(status="Bot's database is empty.")
+=======
+            return StatusModel(status="Bot database is empty.")
+ 
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)

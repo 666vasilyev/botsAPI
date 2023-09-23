@@ -22,4 +22,8 @@ env/
 *.pyd/
 *.pyz/
 *.pywz/
+<<<<<<< HEAD
 *.pyi/
+=======
+*.pyi/
+>>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
