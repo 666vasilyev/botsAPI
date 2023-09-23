@@ -14,7 +14,7 @@ users = {
 }
 
 
-class MyAuthProvider(AuthProvider):
+class MyAuthProvider:
     """
     This is for demo purpose, it's not a better
     way to save and validate user credentials
@@ -24,7 +24,6 @@ class MyAuthProvider(AuthProvider):
         self,
         username: str,
         password: str,
-        remember_me: bool,
         request: Request,
         response: Response,
     ) -> Response:

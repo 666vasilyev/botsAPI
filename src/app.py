@@ -1,18 +1,15 @@
 # uvicorn main:app --host 0.0.0.0 --port 8000  --reload
 import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
-from starlette_admin.contrib.sqla import Admin, ModelView
 
-from starlette_admin.views import Link
-from starlette_admin import DropDown
-from src.admin.auth import MyAuthProvider
+from fastapi import FastAPI
+from starlette.middleware.sessions import SessionMiddleware
+from starlette.staticfiles import StaticFiles
+
 from src.core.config import config
 from src.db.session import sessionmanager
-from src.routers import bot_router, channel_router, messages_router, task_router
-from starlette.middleware import Middleware
-from starlette.middleware.sessions import SessionMiddleware
-from src.db.models import Bot, ChannelBot
+from src.middlewares import AuthMiddleware
+from src.routers import bot_router, channel_router, messages_router, task_router, admin_router
 
 logger = logging.getLogger(__name__)
 
@@ -40,32 +37,9 @@ def get_app(init_db: bool = True):
     app.include_router(channel_router)
     app.include_router(messages_router)
 
-    # Create admin
-    admin = Admin(engine=sessionmanager._engine, 
-                  title="Mai Bot Management",
-                  auth_provider=MyAuthProvider(),
-                  middlewares=[Middleware(SessionMiddleware, secret_key=config.SECRET)],)
-
-    # Add view
-    admin.add_view(
-        DropDown(
-            "Bots",
-            views=[
-                ModelView(Bot, label='List'),
-            ],
-        )
-    )
-    
-    admin.add_view(
-        DropDown(
-            "Channels",
-            views=[
-                ModelView(ChannelBot, label='List'),
-            ],
-        )
-    )
-    admin.add_view(Link(label="Swagger API", url="/docs#"))
-    # Mount admin to your app
-    admin.mount_to(app)
+    app.mount("/statics", StaticFiles(directory="statics"), name="statics")
+    app.include_router(admin_router)
+    app.add_middleware(AuthMiddleware)
+    app.add_middleware(SessionMiddleware, secret_key='jopa')
 
     return app
