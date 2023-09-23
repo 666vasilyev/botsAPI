@@ -5,15 +5,9 @@ Revises: 90421e74de2b
 Create Date: 2023-05-12 12:11:58.568305
 
 """
-<<<<<<< HEAD
-from alembic import op
-import sqlalchemy as sa
-
-=======
 import sqlalchemy as sa
 
 from alembic import op
->>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
 
 # revision identifiers, used by Alembic.
 revision = "710f33c8368f"

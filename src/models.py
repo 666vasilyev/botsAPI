@@ -1,18 +1,6 @@
-<<<<<<< HEAD
-from pydantic import BaseModel
-from typing import Optional
-
-
-class BasicBotsModel(BaseModel):
-    alias: str
-    description: str
-    token: str
-    name: str
-=======
 from typing import Optional
 
 from pydantic import BaseModel
->>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
 
 
 class Data(BaseModel):
@@ -20,14 +8,6 @@ class Data(BaseModel):
     new: bool
 
 
-<<<<<<< HEAD
-class ReqBotsModel(BaseModel):
-    status: str
-    data: Data
-
-
-=======
->>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
 class ChannelPostResModel(BaseModel):
     channel: str
 
@@ -44,10 +24,7 @@ class ChannelPostReqModel(BaseModel):
 
 
 class MessagesPostResModel(BaseModel):
-<<<<<<< HEAD
-=======
     bot_id: int
->>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
     channel_id: str
     message: str
 

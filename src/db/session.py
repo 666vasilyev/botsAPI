@@ -1,22 +1,4 @@
 import contextlib
-<<<<<<< HEAD
-
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-
-from src.core.config import config
-
-engine = create_async_engine(config.db_url("postgresql+asyncpg"))
-
-async_session = async_sessionmaker(engine, expire_on_commit=False, autoflush=True)
-
-
-async def get_session_dep() -> AsyncSession:
-    async with async_session() as session:
-        yield session
-
-
-get_session = contextlib.asynccontextmanager(get_session_dep)
-=======
 from typing import AsyncIterator
 
 from sqlalchemy.ext.asyncio import (
@@ -86,4 +68,3 @@ sessionmanager = DatabaseSessionManager()
 async def get_session():
     async with sessionmanager.session() as session:
         yield session
->>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
