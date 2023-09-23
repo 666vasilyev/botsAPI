@@ -55,6 +55,7 @@ def get_app(init_db: bool = True):
             ],
         )
     )
+    
     admin.add_view(
         DropDown(
             "Channels",
