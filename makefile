@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-all: clear run
-
-clear:
-	@docker compose down
-	@docker compose rm
-
-build:
-	@docker compose build
-
-run: build
-	@docker compose up -d
-=======
 DOCKER_COMPOSE=docker compose
 
 all: clear compose-run
@@ -47,4 +34,3 @@ format:
 	@echo "Форматирование"
 	isort .
 	black .
->>>>>>> 5d8c2b0 (adding new version with tests and starlette-admin)
