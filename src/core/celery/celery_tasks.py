@@ -89,7 +89,13 @@ async def check_bot_status():
             bot_token = bot.bot_token
             channels = bot.channels
             bot_id = bot.id
-            tgBot = Bot(token=bot_token)
+
+            # На случай если данные о боте невалидные, к примеру невалидные bot_token
+            try:
+                tgBot = Bot(token=bot_token)
+            except Exception as e:
+                logging.error(str(e))
+            
             for channel_id in channels:
                 try:
                     chat_member = await tgBot.get_chat_member(
