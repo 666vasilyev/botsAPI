@@ -21,7 +21,7 @@ class Config(BaseSettings):
     FLOWER_PORT: int = 8888
     BEAT_SCHEDULE = {
         "sync-check-bot-status": {
-            "task": "celery_tasks.sync_check_bot_status",
+            "task": "src.core.celery.celery_tasks.sync_check_bot_status",
             "schedule": timedelta(minutes=1),
         }
     }

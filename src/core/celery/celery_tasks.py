@@ -16,9 +16,9 @@ from src.db.crud import (
     get_bot_token_by_id,
     set_bundle_status,
 )
-from src.db.session import sessionmanager
+from src.db.session import get_session
 from src.models import MessagesPostResModel, StatusModel
-from src.routers.bots.crud import get_all_bots, get_bot_by_id
+from src.routers.bots.crud import get_all_bots
 
 celery = Celery(
     "celery_tasks",
@@ -56,7 +56,7 @@ def sync_add_channel_to_bot_by_bot_id(bot_id: int, channel: str):
 
 
 async def celery_post_messages(collect_model: MessagesPostResModel):
-    async with sessionmanager.session() as session:
+    async with get_session() as session:
         bot_token = await get_bot_token_by_id(
             session=session,
             id=collect_model.bot_id
@@ -67,7 +67,7 @@ async def celery_post_messages(collect_model: MessagesPostResModel):
             chat_id=f"@{collect_model.channel_id}", text=collect_model.message
         )
     except Exception:
-        async with sessionmanager.session() as session:
+        async with get_session() as session:
             bot_id = await get_bot_id_by_token(session, bot_token)
             await set_bundle_status(
                 bot_id, collect_model.channel_id, False, collect_model.message, session
@@ -82,7 +82,7 @@ async def celery_post_messages(collect_model: MessagesPostResModel):
 
 
 async def check_bot_status():
-    async with sessionmanager.session() as session:
+    async with get_session() as session:
         bots = await get_all_bots(session)
     for bot in bots:
         if bot:
@@ -114,4 +114,3 @@ async def check_bot_status():
             await tgBot.close()
         else:
             return StatusModel(status="Bot database is empty.")
- 

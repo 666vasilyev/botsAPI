@@ -10,14 +10,18 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from src.db.models import Base
+import logging
 
+logger = logging.getLogger(__name__)
 
 class DatabaseSessionManager:
     def __init__(self):
+        logging.info('__init__')
         self._engine: AsyncEngine | None = None
         self._sessionmaker: async_sessionmaker | None = None
 
     def init(self, host: str):
+        logging.info('init')
         self._engine = create_async_engine(host)
         self._sessionmaker = async_sessionmaker(autocommit=False, bind=self._engine)
 

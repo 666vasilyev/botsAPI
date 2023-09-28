@@ -27,6 +27,8 @@ services:
 
   alembic:
     container_name: "alembic"
+    # build: 
+    #   dockerfile: Dockerfile
     image: app
     environment:
       - ALEMBIC_INI=alembic.ini
@@ -38,6 +40,8 @@ services:
 
   celery:
     container_name: "celery"
+    build: 
+      dockerfile: Dockerfile
     image: app
     depends_on:
       - redis
@@ -47,6 +51,8 @@ services:
 
   celery_beat:
     container_name: "celery_beat"
+    build: 
+      dockerfile: Dockerfile
     image: app
     depends_on:
       - redis
