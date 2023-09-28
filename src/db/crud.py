@@ -5,9 +5,9 @@ from sqlalchemy import delete, func, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-
+from src.db.session import get_session
 from src.db.models import Bot, ChannelBot
-from src.db.session import sessionmanager
+# from src.db.session import sessionmanager
 from src.models import (
     AllBundlesModel,
     BundleModel,
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 async def add_channel_to_bot_by_bot_id(bot_id: int, channel: str):
-    async with sessionmanager.session() as session:
+    async with get_session() as session:
         async with session.begin():
             # Проверяем, существует ли уже канал в списке каналов бота
             existing_channel = await session.execute(

@@ -10,7 +10,7 @@ from src.db.crud import (
     get_bot_with_min_channels_count,
     remove_channel_from_bot,
 )
-from src.db.session import get_session
+from src.db.session import get_session_dep
 from src.models import (
     BotAliasByChannelIdModel,
     ChannelPostReqModel,
@@ -23,13 +23,13 @@ router = APIRouter(prefix="/channel")
 
 
 @router.get("/")
-async def get_channels(session: Annotated[AsyncSession, Depends(get_session)]):
+async def get_channels(session: Annotated[AsyncSession, Depends(get_session_dep)]):
     return await get_all_bundles(session)
 
 
 @router.get("/{channel_id}")
 async def get_channels_by_id(
-    channel_id: str, session: Annotated[AsyncSession, Depends(get_session)]
+    channel_id: str, session: Annotated[AsyncSession, Depends(get_session_dep)]
 ):
     bot = await get_bot_by_channel_id(session=session, channel_id=channel_id)
     return BotAliasByChannelIdModel(alias=bot.alias) 
@@ -38,7 +38,7 @@ async def get_channels_by_id(
 @router.post("/")
 async def post_channels(
     collect_model: ChannelPostResModelByBotId,
-    session: Annotated[AsyncSession, Depends(get_session)],
+    session: Annotated[AsyncSession, Depends(get_session_dep)],
 ):
     if collect_model.bot_id:
         celery_task = celery_tasks.sync_add_channel_to_bot_by_bot_id.delay(
@@ -59,7 +59,7 @@ async def post_channels(
 async def delete_channels(
     bot_id: int,
     collect_model: ChannelPostResModel,
-    session: Annotated[AsyncSession, Depends(get_session)],
+    session: Annotated[AsyncSession, Depends(get_session_dep)],
 ):
     return await remove_channel_from_bot(
         bot_id=bot_id, channel=collect_model.channel, session=session
