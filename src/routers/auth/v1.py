@@ -10,7 +10,7 @@ from src.routers.templates import templates
 router = APIRouter()
 
 
-@router.get("/index")
+@router.get("/")
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
