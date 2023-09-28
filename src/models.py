@@ -1,3 +1,4 @@
+import datetime
 from typing import Optional
 
 from pydantic import BaseModel
@@ -58,6 +59,7 @@ class BotAliasByChannelIdModel(BaseModel):
 class BundleModel(BaseModel):
     channel: str
     bot_id: int
+    created_at: datetime.datetime
     bundle: bool
     message: str
 

@@ -159,6 +159,7 @@ async def get_all_bundles(session: AsyncSession):
         bundle = BundleModel(
             channel=record.channel,
             bot_id=record.bot_id,
+            created_at=record.created_at,
             bundle=record.bundle,
             message=record.message,
         )
