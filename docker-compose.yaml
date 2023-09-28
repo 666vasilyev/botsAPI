@@ -3,7 +3,9 @@ services:
 
   app:
     container_name: "app"
-    build: ./
+    build: 
+      context: ./
+      dockerfile: Dockerfile
     ports:
       - ${API_PORT}:${API_PORT}
     command: uvicorn main:app --host 0.0.0.0 --port ${API_PORT} --reload
@@ -19,7 +21,7 @@ services:
 
   redis:
     image: redis:7
-    container_name: redis
+    container_name: "redis"
     env_file:
       .env
 
@@ -39,7 +41,7 @@ services:
     image: app
     depends_on:
       - redis
-    command: celery -A celery_tasks worker --loglevel=${LOG_LEVEL} --purge
+    command: celery -A src.core.celery.celery_tasks worker --loglevel=${LOG_LEVEL} --purge
     env_file:
       .env
 
@@ -48,6 +50,6 @@ services:
     image: app
     depends_on:
       - redis
-    command: celery -A celery_tasks beat --loglevel=${LOG_LEVEL}
+    command: celery -A src.core.celery.celery_tasks beat --loglevel=${LOG_LEVEL}
     env_file:
       .env
