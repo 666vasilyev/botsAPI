@@ -13,9 +13,9 @@ class Base(DeclarativeBase):
 class Bot(Base):
     __tablename__ = "Bots"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    alias: Mapped[str] = mapped_column(nullable=False, unique=True)
-    description: Mapped[str] = mapped_column(nullable=False, unique=True)
-    name: Mapped[str] = mapped_column(nullable=False, unique=True)
+    alias: Mapped[str] = mapped_column(nullable=False)
+    description: Mapped[str] = mapped_column(nullable=False)
+    name: Mapped[str] = mapped_column(nullable=False)
     bot_token: Mapped[str] = mapped_column(nullable=False, unique=True)
     channels: Mapped[List[str]] = mapped_column(ARRAY(String))
     channels_count: Mapped[int] = mapped_column(default=0)
