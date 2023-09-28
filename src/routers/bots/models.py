@@ -1,8 +1,10 @@
+import datetime
 from pydantic import BaseModel, Field
 
 
 class BotRead(BaseModel):
     id: int = Field(default=0)
+    created_at: datetime.datetime
     alias: str
     description: str
     name: str

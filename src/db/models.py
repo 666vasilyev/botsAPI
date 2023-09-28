@@ -13,6 +13,7 @@ class Base(DeclarativeBase):
 class Bot(Base):
     __tablename__ = "Bots"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    created_at: Mapped[datetime.datetime] = mapped_column(server_default=text("NOW()"))
     alias: Mapped[str] = mapped_column(nullable=False)
     description: Mapped[str] = mapped_column(nullable=False)
     name: Mapped[str] = mapped_column(nullable=False)
