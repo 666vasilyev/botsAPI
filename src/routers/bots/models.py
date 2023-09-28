@@ -28,3 +28,9 @@ class BotUpdate(BaseModel):
     bot_token: str | None
     channels: list[str] | None
     channels_count: int | None
+
+class BundleStatusModel(BaseModel):
+    bot_id: int
+    channel_id: str
+    is_admin: bool
+    message: str

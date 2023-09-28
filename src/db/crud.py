@@ -114,6 +114,11 @@ async def get_bot_by_channel_id(channel_id: str, session: AsyncSession) -> Bot:
     bot = result.scalar_one_or_none()
     return bot
 
+async def get_bot_by_id(id: int, session: AsyncSession) -> Bot:
+    query = select(Bot).where(Bot.id == id)
+    result = await session.execute(query)
+    bot = result.scalar_one_or_none()
+    return bot
 
 async def get_bot_with_min_channels_count(session: AsyncSession):
     query = select(Bot).order_by(Bot.channels_count).limit(1)
