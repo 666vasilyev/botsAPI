@@ -10,7 +10,7 @@ from src.routers.templates import templates
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("/index")
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
@@ -38,7 +38,7 @@ async def login(request: Request):
             request,
             RedirectResponse(
                 request.query_params.get("next")
-                or request.url_for("/"),
+                or request.url_for("index"),
                 status_code=HTTP_303_SEE_OTHER,
             ),
         )
