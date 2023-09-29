@@ -30,3 +30,5 @@ class ChannelBot(Base):
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=text("NOW()"))
     bundle: Mapped[bool] = mapped_column(nullable=False)
     message: Mapped[str] = mapped_column(default="Bundle is active")
+    # TODO: тестировать и исправить server_default
+    active: Mapped[bool] = mapped_column(default=True, server_default='True')

@@ -8,7 +8,7 @@ from starlette.staticfiles import StaticFiles
 
 # from src.db.session import sessionmanager
 from src.middlewares import AuthMiddleware
-from src.routers import bot_router, channel_router, messages_router, task_router, admin_router
+from src.routers import bot_router, channel_router, messages_router, task_router, admin_router, activity_router
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +35,7 @@ def get_app(init_db: bool = True):
     app.include_router(task_router)
     app.include_router(channel_router)
     app.include_router(messages_router)
+    app.include_router(activity_router)
 
     app.mount("/statics", StaticFiles(directory="statics"), name="statics")
     app.include_router(admin_router)

@@ -9,6 +9,8 @@ from src.db.session import get_session
 from src.db.models import Bot, ChannelBot
 # from src.db.session import sessionmanager
 from src.models import (
+    ActivityModel,
+    AllActivityModel,
     AllBundlesModel,
     BundleModel,
     ChannelListModel,
@@ -162,11 +164,36 @@ async def get_all_bundles(session: AsyncSession):
     records = result.scalars().all()
     for record in records:
         bundle = BundleModel(
+            id=record.id,
             channel=record.channel,
             bot_id=record.bot_id,
             created_at=record.created_at,
             bundle=record.bundle,
             message=record.message,
+            active=record.active,
         )
         res.all_bundles.append(bundle)
+    return res
+
+
+async def set_channel_activity(channel_id: str, activity: bool, session: AsyncSession):
+    update_query = (
+        update(ChannelBot)
+       .where(ChannelBot.channel == channel_id)
+       .values(active=activity)
+    )
+    await session.execute(update_query)
+    await session.commit()
+
+
+async def get_channel_activity(session: AsyncSession):
+    res = AllActivityModel(all_activity=[])
+    result = await session.execute(select(ChannelBot))
+    records = result.scalars().all()
+    for record in records:
+        bundle = ActivityModel(
+            channel=record.channel,
+            active=record.active,
+        )
+        res.all_activity.append(bundle)
     return res

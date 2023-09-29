@@ -8,7 +8,9 @@ from src.db.crud import (
     get_all_bundles,
     get_bot_by_channel_id,
     get_bot_with_min_channels_count,
+    get_channel_activity,
     remove_channel_from_bot,
+    set_channel_activity,
 )
 from src.db.session import get_session_dep
 from src.models import (
@@ -64,3 +66,5 @@ async def delete_channels(
     return await remove_channel_from_bot(
         bot_id=bot_id, channel=collect_model.channel, session=session
     )
+
+

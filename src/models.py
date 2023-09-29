@@ -57,12 +57,21 @@ class BotAliasByChannelIdModel(BaseModel):
 
 
 class BundleModel(BaseModel):
+    id: int
     channel: str
     bot_id: int
     created_at: datetime.datetime
     bundle: bool
     message: str
+    active: bool
+
+class ActivityModel(BaseModel):
+    channel: str
+    active: bool
 
 
 class AllBundlesModel(BaseModel):
     all_bundles: list[BundleModel]
+
+class AllActivityModel(BaseModel):
+    all_activity: list[ActivityModel]
