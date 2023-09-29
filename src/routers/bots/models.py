@@ -11,6 +11,7 @@ class BotRead(BaseModel):
     bot_token: str
     channels: list[str] = Field(default_factory=list)
     channels_count: int = Field(default=0)
+    active: bool
 
     class Config:
         orm_mode = True

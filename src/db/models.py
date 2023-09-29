@@ -20,6 +20,7 @@ class Bot(Base):
     bot_token: Mapped[str] = mapped_column(nullable=False, unique=True)
     channels: Mapped[List[str]] = mapped_column(ARRAY(String))
     channels_count: Mapped[int] = mapped_column(default=0)
+    active: Mapped[bool] = mapped_column(default=False, server_default='True')
 
 
 class ChannelBot(Base):

@@ -20,6 +20,17 @@ from src.models import (
 logger = logging.getLogger(__name__)
 
 
+
+async def set_bot_activity(bot_id: str, activity: bool, session: AsyncSession):
+    update_query = (
+        update(Bot)
+      .where(Bot.id == bot_id)
+      .values(active=activity)
+    )
+    await session.execute(update_query)
+    await session.commit()
+
+
 async def add_channel_to_bot_by_bot_id(bot_id: int, channel: str):
     async with get_session() as session:
         async with session.begin():
@@ -46,7 +57,7 @@ async def add_channel_to_bot_by_bot_id(bot_id: int, channel: str):
 
                 # Добавляем новую связь между каналом и ботом
                 await add_new_bundle(channel=channel, bot_id=bot_id, session=session)
-
+                await set_bot_activity(bot_id=bot_id, activity=True, session=session)
                 return StatusModel(status="Success")
             except IntegrityError:
                 return StatusModel(status="Channel already exists")
