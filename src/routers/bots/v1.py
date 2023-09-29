@@ -57,7 +57,7 @@ async def check_status(
         tgBot = Bot(token=bot_token)
     except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+            status_code=status.HTTP_409_CONFLICT, detail=str(e)
         )
     try:
         chat_member = await tgBot.get_chat_member(
