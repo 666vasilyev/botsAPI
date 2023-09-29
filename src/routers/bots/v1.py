@@ -1,9 +1,10 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram import Bot, types
 from src.db.session import get_session_dep
+from starlette import status
 
 from .crud import add_bot, delete_bot, get_all_bots, get_bot_by_id, update_bot
 from .models import BotCreate, BotRead, BotUpdate, BundleStatusModel
@@ -52,7 +53,12 @@ async def check_status(
 ):
     bot = await get_bot_by_id(bot_id=bot_id, session=session)
     bot_token = bot.bot_token
-    tgBot = Bot(token=bot_token)
+    try:
+        tgBot = Bot(token=bot_token)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
     try:
         chat_member = await tgBot.get_chat_member(
             f"@{channel_id}", (await tgBot.get_me()).id
