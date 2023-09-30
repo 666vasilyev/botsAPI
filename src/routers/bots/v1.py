@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram import Bot, types
 from src.db.session import get_session_dep
 from starlette import status
-
+from src.core.auth.database import User
 from .crud import add_bot, delete_bot, get_all_bots, get_bot_by_id, update_bot
 from .models import BotCreate, BotRead, BotUpdate, BundleStatusModel
 

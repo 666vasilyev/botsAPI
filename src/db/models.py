@@ -1,5 +1,6 @@
 import datetime
 from typing import List
+from fastapi_users.db import SQLAlchemyBaseUserTable
 
 from sqlalchemy import String, text
 from sqlalchemy.dialects.postgresql import ARRAY
@@ -33,3 +34,8 @@ class ChannelBot(Base):
     message: Mapped[str] = mapped_column(default="Bundle is active")
     # TODO: тестировать и исправить server_default
     active: Mapped[bool] = mapped_column(default=True, server_default='True')
+
+    
+class User(SQLAlchemyBaseUserTable[int], Base):
+    __tablename__ = "Users"
+    id: Mapped[int] = mapped_column(primary_key=True)

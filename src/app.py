@@ -1,29 +1,22 @@
 # uvicorn main:app --host 0.0.0.0 --port 8000  --reload
 import logging
-from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
-from starlette.middleware.sessions import SessionMiddleware
-from starlette.staticfiles import StaticFiles
-
-# from src.db.session import sessionmanager
-from src.middlewares import AuthMiddleware
-from src.routers import bot_router, channel_router, messages_router, task_router, admin_router, activity_router
+from fastapi import Depends, FastAPI
+from fastapi_users import FastAPIUsers
+# from src.core.auth.database import User
+from src.db.models import User
+from src.core.auth.auth import auth_backend
+from src.core.auth.manager import get_user_manager
+from src.core.auth.schemas import UserRead, UserCreate
+from src.routers import bot_router, channel_router, messages_router, task_router, activity_router
 
 logger = logging.getLogger(__name__)
 
 
 def get_app(init_db: bool = True):
+    """Create the FastAPI application."""
+
     lifespan = None
-
-    # if init_db:
-    #     sessionmanager.init(config.db_url("postgresql+asyncpg"))
-
-    #     @asynccontextmanager
-    #     async def lifespan(app: FastAPI):
-    #         yield
-    #         if sessionmanager._engine is not None:
-    #             await sessionmanager.close()
 
     app = FastAPI(title="botsAPI", lifespan=lifespan)
 
@@ -31,15 +24,32 @@ def get_app(init_db: bool = True):
     async def startup():
         logging.basicConfig(level=logging.INFO)
 
-    app.include_router(bot_router)
-    app.include_router(task_router)
-    app.include_router(channel_router)
-    app.include_router(messages_router)
-    app.include_router(activity_router)
+    fastapi_users = FastAPIUsers[User, int](
+        get_user_manager,
+        [auth_backend],
+    )
 
-    app.mount("/statics", StaticFiles(directory="statics"), name="statics")
-    app.include_router(admin_router)
-    app.add_middleware(AuthMiddleware)
-    app.add_middleware(SessionMiddleware, secret_key='jopa')
+
+    app.include_router(
+        fastapi_users.get_auth_router(auth_backend),
+        prefix="/auth/jwt",
+        tags=["auth"],
+    )
+
+    app.include_router(
+        fastapi_users.get_register_router(UserRead, UserCreate),
+        prefix="/auth",
+        tags=["auth"],
+    )
+
+    current_user = fastapi_users.current_user()
+
+
+    # app.include_router(bot_router, dependencies=[Depends(current_user)])
+    app.include_router(bot_router)
+    app.include_router(task_router, dependencies=[Depends(current_user)])
+    app.include_router(channel_router, dependencies=[Depends(current_user)])
+    app.include_router(messages_router, dependencies=[Depends(current_user)])
+    app.include_router(activity_router, dependencies=[Depends(current_user)])
 
     return app

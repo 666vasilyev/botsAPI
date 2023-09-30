@@ -53,6 +53,4 @@ python-dotenv==1.0.0
 tenacity==8.2.2
 pytest-mock==3.10.0
 aiogram_tests==1.0.3
-fastapi-admin
-itsdangerous
-starlette-admin
+fastapi-users[sqlalchemy]
