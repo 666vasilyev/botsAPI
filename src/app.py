@@ -24,29 +24,15 @@ def get_app(init_db: bool = True):
     async def startup():
         logging.basicConfig(level=logging.INFO)
 
-    fastapi_users = FastAPIUsers[User, int](
-        get_user_manager,
-        [auth_backend],
-    )
+    fastapi_users = FastAPIUsers[User, int](get_user_manager, [auth_backend], )
 
+    app.include_router(fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"], )
 
-    app.include_router(
-        fastapi_users.get_auth_router(auth_backend),
-        prefix="/auth/jwt",
-        tags=["auth"],
-    )
-
-    app.include_router(
-        fastapi_users.get_register_router(UserRead, UserCreate),
-        prefix="/auth",
-        tags=["auth"],
-    )
+    app.include_router(fastapi_users.get_register_router(UserRead, UserCreate), prefix="/auth", tags=["auth"], )
 
     current_user = fastapi_users.current_user()
 
-
-    # app.include_router(bot_router, dependencies=[Depends(current_user)])
-    app.include_router(bot_router)
+    app.include_router(bot_router, dependencies=[Depends(current_user)])
     app.include_router(task_router, dependencies=[Depends(current_user)])
     app.include_router(channel_router, dependencies=[Depends(current_user)])
     app.include_router(messages_router, dependencies=[Depends(current_user)])

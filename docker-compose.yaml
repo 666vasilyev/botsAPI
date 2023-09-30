@@ -1,6 +1,5 @@
 version: "3.7"
 services:
-
   app:
     container_name: "app"
     build: 
@@ -27,9 +26,9 @@ services:
 
   alembic:
     container_name: "alembic"
-    # build: 
-    #   dockerfile: Dockerfile
-    image: app
+    build:
+      context: ./
+      dockerfile: Dockerfile
     environment:
       - ALEMBIC_INI=alembic.ini
     depends_on:
@@ -40,7 +39,8 @@ services:
 
   celery:
     container_name: "celery"
-    build: 
+    build:
+      context: ./
       dockerfile: Dockerfile
     image: app
     depends_on:
@@ -51,7 +51,8 @@ services:
 
   celery_beat:
     container_name: "celery_beat"
-    build: 
+    build:
+      context: ./
       dockerfile: Dockerfile
     image: app
     depends_on:
